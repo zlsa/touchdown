@@ -1,0 +1,17 @@
+
+@import "reset.css";
+@import "error.css";
+
+html, body {
+    height: 100%;
+    overflow: hidden;
+    width: 100%;
+}
+
+html {
+    font-family: sans-serif;
+}
+
+.inset {
+    text-shadow: 0 1px 0 #eee;
+}

@@ -1,0 +1,12 @@
+
+function sound_init() {
+    prop.sound={};
+    prop.sound.context=null;
+    try {
+        prop.sound.context=new AudioContext();
+    }
+    catch(e) {
+        alert('Web Audio API is not supported in this browser');
+    }
+    loaded("sound");
+}

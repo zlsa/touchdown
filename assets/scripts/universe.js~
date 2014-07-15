@@ -1,0 +1,86 @@
+
+var Planet=function(name,parent,type,radius,mass,distance,period,orbit,angle) {
+    this.name=name;
+    this.type=type;
+    this.parent=parent; // if null, position == [0,0]
+    this.radius=radius; // in km
+    this.mass=mass; // in kg
+    this.distance=distance; // in km; if (parent != null) assert(distance != null)
+    this.period=period; // in seconds; negative == ccw
+    console.log(period);
+    this.orbit=orbit; // distance along orbit in multipliers of period; start on top (y-)
+    if(this.orbit == null)
+        this.orbit=0;
+    this.start_time=universe_time();
+    this.last_time=universe_time();
+    this.angle=angle; // rotation of planet
+    if(this.angle == null)
+        this.angle=0;
+
+    this.loc=[0,0];
+
+    this.update_loc=function() {
+        if(this.parent == null) {
+            this.loc=[0,0];
+            return;
+        }
+        this.loc[0]=Math.sin(this.orbit)*this.distance;
+        this.loc[1]=Math.cos(this.orbit)*this.distance;
+        if(this.parent != null) {
+            this.loc[0]+=this.parent.loc[0];
+            this.loc[1]+=this.parent.loc[1];
+        }
+    };
+    this.update_orbit=function() {
+        var time=universe_time();
+        var elapsed=(time-this.last_time)/1000;
+        this.orbit+=elapsed/this.period;
+        this.last_time=time;
+    };
+    this.update=function() {
+        this.update_orbit();
+        this.update_loc();
+    };
+
+    this.update_loc();
+};
+
+function universe_time() {
+    return((new Date().getTime()-100000)*1000000);
+}
+
+function universe_init() {
+    prop.universe={};
+
+    prop.universe.planets=[];
+    var earth=new Planet(
+	"Earth",
+        null,
+        "earth",
+        6300,
+        5972190000000000000000000,
+        150000000,
+        365.25*24*60*60
+    );
+    var moon=new Planet(
+	"Moon",
+        earth,
+        "rocky",
+        630,
+        597219000000000000000,
+        25000,
+        28*24*60*60
+    );
+    prop.universe.planets.earth=earth;
+    prop.universe.planets.moon=moon;
+    
+    prop.universe.suns=[];
+    
+    loaded("universe");
+}
+
+function universe_update() {
+    for(var i in prop.universe.planets) {
+        prop.universe.planets[i].update();
+    }
+}
